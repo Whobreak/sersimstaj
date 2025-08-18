@@ -5,6 +5,8 @@ import { Info } from '~/lib/icons/Info';
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 
+
+
 // import { // card
 //   Card,
 //   CardContent,
@@ -257,6 +259,9 @@ export default function Screen() {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
+      <Button>
+        <Text>TIKLA</Text>
+      </Button>
     </View>
   );
 }
