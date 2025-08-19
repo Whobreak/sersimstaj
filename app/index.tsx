@@ -116,10 +116,10 @@ export default function Index() {
 
   const cardsData: CardItemProps[] = [
     { id: '1', role: 'STAJYER', name: 'Görkem Karlı', phone: '+905533004923', city: 'DÜZCE' },
-    { id: '2', role: 'STAJYER', name: 'Ali Veli', phone: '+905533001234', city: 'İSTANBUL' },
-    { id: '3', role: 'STAJYER', name: 'Ayşe Demir', phone: '+905533009876', city: 'ANKARA' },
-    { id: '4', role: 'STAJYER', name: 'Mehmet Can', phone: '+905533009999', city: 'İZMİR' },
-    { id: '5', role: 'STAJYER', name: 'Elif Yılmaz', phone: '+905533001122', city: 'BURSA' },
+    { id: '2', role: 'IK', name: 'Ali Veli', phone: '+905533001234', city: 'İSTANBUL' },
+    { id: '3', role: 'USTABASI', name: 'Ayşe Demir', phone: '+905533009876', city: 'ANKARA' },
+    { id: '4', role: 'SATIN ALMA MÜDÜR', name: 'Mehmet Can', phone: '+905533009999', city: 'İZMİR' },
+    { id: '5', role: 'MAVİ YAKA', name: 'Elif Yılmaz', phone: '+905533001122', city: 'BURSA' },
   ];
 
   const filteredCards = cardsData.filter(
@@ -135,13 +135,15 @@ export default function Index() {
 
   return (
     <View style={[styles.container, { backgroundColor: containerBg, paddingTop: insets.top }]}>
-      <TextInput
-        placeholder="Ara... (isim, rol, şehir)"
-        placeholderTextColor={isDarkMode ? '#aaa' : '#555'}
-        value={searchText}
-        onChangeText={setSearchText}
-        style={[styles.input, { backgroundColor: inputBg, color: inputTextColor }]}
-      />
+       {currentTab === 'activity' && (
+    <TextInput
+      placeholder="Ara... (isim, rol, şehir)"
+      placeholderTextColor={isDarkMode ? '#aaa' : '#555'}
+      value={searchText}
+      onChangeText={setSearchText}
+      style={[styles.input, { backgroundColor: inputBg, color: inputTextColor }]}
+    />
+  )}
 
       <Tabs value={currentTab} onValueChange={setCurrentTab} style={{ flex: 1 }}>
         {/* Home Tab */}
