@@ -1,11 +1,57 @@
 import * as React from 'react';
-import { View, FlatList, TextInput, useWindowDimensions, Text, StyleSheet, useColorScheme, TouchableOpacity } from 'react-native';
+import { View, FlatList, TextInput, useWindowDimensions, Text, StyleSheet, useColorScheme } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolate, Easing } from 'react-native-reanimated';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Tooltip, TooltipTrigger, TooltipContent } from '~/components/ui/tooltip';
-import { Info, Clock, Settings, Activity } from 'lucide-react-native';
+import { Info, Home, User, Settings } from 'lucide-react-native';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '~/components/ui/tabs';
+
+
+import { Input } from '~/components/ui/input';
+
+
+function Example() {
+  const [value, setValue] = React.useState('');
+
+  const onChangeText = (text: string) => {
+    setValue(text);
+  };
+
+  return (
+      <Input
+        placeholder='Write some stuff...'
+        value={value}
+        onChangeText={onChangeText}
+        aria-labelledby='inputLabel'
+        aria-errormessage='inputError'
+      />
+  );
+}
+
+
+  const [value, setValue] = React.useState('');
+
+  const onChangeText = (text: string) => {
+    setValue(text);
+  };
+
+  //return (
+      <Input
+        placeholder='Write some stuff...'
+        value={value}
+        onChangeText={onChangeText}
+        aria-labelledby='inputLabel'
+        aria-errormessage='inputError'
+      />
+//  );
+
+
+
+
+
+
 
 // ---------------------------
 // Card Props
@@ -32,7 +78,7 @@ function CardItem({ role, name, phone, city, width, isDarkMode }: CardItemCompon
   const iconColor = isDarkMode ? '#fff' : '#000';
 
   return (
-    <Animated.View>
+    <Animated.View entering={FadeIn.duration(300)}>
       <Card style={[styles.card, { width, backgroundColor: bgColor }]}>
         <CardHeader style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <CardTitle style={[styles.cardTitle, { color: textColor }]}>{role}</CardTitle>
@@ -63,21 +109,10 @@ function CardItem({ role, name, phone, city, width, isDarkMode }: CardItemCompon
 export default function Index() {
   const { width: windowWidth } = useWindowDimensions();
   const [searchText, setSearchText] = React.useState('');
-  const [currentTab, setCurrentTab] = React.useState<'activity' | 'bekleyen' | 'settings'>('activity');
+  const [currentTab, setCurrentTab] = React.useState('home');
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
   const insets = useSafeAreaInsets();
-
-  const translateX = useSharedValue(0); // Slide animasyon için
-
-  React.useEffect(() => {
-    const target = currentTab === 'activity' ? 0 : currentTab === 'bekleyen' ? -windowWidth : -2 * windowWidth;
-    translateX.value = withTiming(target, { duration: 300, easing: Easing.out(Easing.exp) });
-  }, [currentTab]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-  }));
 
   const cardsData: CardItemProps[] = [
     { id: '1', role: 'STAJYER', name: 'Görkem Karlı', phone: '+905533004923', city: 'DÜZCE' },
@@ -108,61 +143,89 @@ export default function Index() {
         style={[styles.input, { backgroundColor: inputBg, color: inputTextColor }]}
       />
 
-      {/* İçerik */}
-      <Animated.View style={[{ flexDirection: 'row', width: windowWidth * 3, flex: 1 }, animatedStyle]}>
-        <View style={{ width: windowWidth }}>
+      <Tabs value={currentTab} onValueChange={setCurrentTab} style={{ flex: 1 }}>
+        {/* Home Tab */}
+        <TabsContent value="home" style={{ flex: 1 }}>
           <FlatList
             data={filteredCards}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 16 }}
+            numColumns={1}
+            contentContainerStyle={{ paddingBottom: 80, paddingHorizontal: 16 }}
             renderItem={({ item }) => <CardItem {...item} width={windowWidth - 32} isDarkMode={isDarkMode} />}
           />
-        </View>
-        <View style={{ width: windowWidth, justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ color: isDarkMode ? '#fff' : '#000' }}>Bekleyen sayfası</Text>
-        </View>
-        <View style={{ width: windowWidth, justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ color: isDarkMode ? '#fff' : '#000' }}>Settings sayfası</Text>
-        </View>
-      </Animated.View>
+        </TabsContent>
 
-      {/* Tab Bar */}
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-around',
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: 70,
-          backgroundColor: isDarkMode ? '#222' : '#fff',
-          borderTopWidth: 1,
-          borderTopColor: isDarkMode ? '#444' : '#ccc',
-          paddingBottom: insets.bottom + 5,
-        }}
-      >
-        <TouchableOpacity onPress={() => setCurrentTab('activity')} style={{ alignItems: 'center', justifyContent: 'center' }}>
-          <Activity size={26} color={currentTab === 'activity' ? (isDarkMode ? '#fff' : '#007AFF') : '#888'} />
-          <Text style={{ fontSize: 12, color: currentTab === 'activity' ? (isDarkMode ? '#fff' : '#007AFF') : '#888' }}>
-            Açıkta
-          </Text>
-        </TouchableOpacity>
+        {/* Profile Tab */}
+        <TabsContent value="profile" style={{ flex: 1 }}>
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ color: isDarkMode ? '#fff' : '#000' }}>Profile sayfası</Text>
+          </View>
+        </TabsContent>
 
-        <TouchableOpacity onPress={() => setCurrentTab('bekleyen')} style={{ alignItems: 'center', justifyContent: 'center' }}>
-          <Clock size={26} color={currentTab === 'bekleyen' ? (isDarkMode ? '#fff' : '#007AFF') : '#888'} />
-          <Text style={{ fontSize: 12, color: currentTab === 'bekleyen' ? (isDarkMode ? '#fff' : '#007AFF') : '#888' }}>
-            Bekleyen
-          </Text>
-        </TouchableOpacity>
+        {/* Settings Tab */}
+        <TabsContent value="settings" style={{ flex: 1 }}>
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ color: isDarkMode ? '#fff' : '#000' }}>Settings sayfası</Text>
+          </View>
+        </TabsContent>
 
-        <TouchableOpacity onPress={() => setCurrentTab('settings')} style={{ alignItems: 'center', justifyContent: 'center' }}>
-          <Settings size={26} color={currentTab === 'settings' ? (isDarkMode ? '#fff' : '#007AFF') : '#888'} />
-          <Text style={{ fontSize: 12, color: currentTab === 'settings' ? (isDarkMode ? '#fff' : '#007AFF') : '#888' }}>
-            Ayarlar
-          </Text>
-        </TouchableOpacity>
-      </View>
+        {/* Tab Bar */}
+        <TabsList
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            position: 'absolute',
+            bottom: insets.bottom,
+            left: 0,
+            right: 0,
+            height: 60,
+            backgroundColor: isDarkMode ? '#222' : '#fff',
+            zIndex: 999,
+          }}
+        >
+          <TabsTrigger value="home" style={{ alignItems: 'center', justifyContent: 'center' }}>
+            <Home size={24} color={currentTab === 'home' ? (isDarkMode ? '#fff' : '#007AFF') : '#888'} />
+            {currentTab === 'home' && (
+              <View style={{
+                position: 'absolute',
+                bottom: 0,
+                height: 2,
+                width: 24,
+                backgroundColor: isDarkMode ? '#fff' : '#007AFF',
+                borderRadius: 1,
+              }}/>
+            )}
+          </TabsTrigger>
+
+          <TabsTrigger value="profile" style={{ alignItems: 'center', justifyContent: 'center' }}>
+            <User size={24} color={currentTab === 'profile' ? (isDarkMode ? '#fff' : '#007AFF') : '#888'} />
+            {currentTab === 'profile' && (
+              <View style={{
+                position: 'absolute',
+                bottom: 0,
+                height: 2,
+                width: 24,
+                backgroundColor: isDarkMode ? '#fff' : '#007AFF',
+                borderRadius: 1,
+              }}/>
+            )}
+          </TabsTrigger>
+
+          <TabsTrigger value="settings" style={{ alignItems: 'center', justifyContent: 'center' }}>
+            <Settings size={24} color={currentTab === 'settings' ? (isDarkMode ? '#fff' : '#007AFF') : '#888'} />
+            {currentTab === 'settings' && (
+              <View style={{
+                position: 'absolute',
+                bottom: 0,
+                height: 2,
+                width: 24,
+                backgroundColor: isDarkMode ? '#fff' : '#007AFF',
+                borderRadius: 1,
+              }}/>
+            )}
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
     </View>
   );
 }
@@ -194,3 +257,4 @@ const styles = StyleSheet.create({
   cardText: { fontSize: 14, marginBottom: 4 },
   tooltipContent: { fontSize: 13 },
 });
+
