@@ -1,14 +1,12 @@
 import * as React from 'react';
-import { View, FlatList, TextInput, useWindowDimensions, Text, StyleSheet, useColorScheme } from 'react-native';
+import { View, FlatList, TextInput, useWindowDimensions, Text, StyleSheet, useColorScheme, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Tooltip, TooltipTrigger, TooltipContent } from '~/components/ui/tooltip';
-import { Info, Home, User, Settings } from 'lucide-react-native';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '~/components/ui/tabs';
-
-
+import { Info, User, Settings, Activity } from 'lucide-react-native';
+import { Tabs, TabsList, TabsContent } from '~/components/ui/tabs';
 
 // ---------------------------
 // Card Props
@@ -66,7 +64,7 @@ function CardItem({ role, name, phone, city, width, isDarkMode }: CardItemCompon
 export default function Index() {
   const { width: windowWidth } = useWindowDimensions();
   const [searchText, setSearchText] = React.useState('');
-  const [currentTab, setCurrentTab] = React.useState('home');
+  const [currentTab, setCurrentTab] = React.useState('activity');
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
   const insets = useSafeAreaInsets();
@@ -101,8 +99,8 @@ export default function Index() {
       />
 
       <Tabs value={currentTab} onValueChange={setCurrentTab} style={{ flex: 1 }}>
-        {/* Home Tab */}
-        <TabsContent value="home" style={{ flex: 1 }}>
+        {/* Activity Tab */}
+        <TabsContent value="activity" style={{ flex: 1 }}>
           <FlatList
             data={filteredCards}
             keyExtractor={(item) => item.id}
@@ -132,17 +130,23 @@ export default function Index() {
             flexDirection: 'row',
             justifyContent: 'space-around',
             position: 'absolute',
-            bottom: insets.bottom,
+            bottom: 0,              // Ekranın tam altı
             left: 0,
             right: 0,
             height: 60,
             backgroundColor: isDarkMode ? '#222' : '#fff',
+            borderTopWidth: 1,
+            borderTopColor: isDarkMode ? '#444' : '#ccc', // alt çentiğin ayrı algılanması için
             zIndex: 999,
           }}
         >
-          <TabsTrigger value="home" style={{ alignItems: 'center', justifyContent: 'center' }}>
-            <Home size={24} color={currentTab === 'home' ? (isDarkMode ? '#fff' : '#007AFF') : '#888'} />
-            {currentTab === 'home' && (
+          {/* Activity Tab Trigger */}
+          <TouchableOpacity onPress={() => setCurrentTab('activity')} style={{ alignItems: 'center', justifyContent: 'center' }}>
+            <Activity size={24} color={currentTab === 'activity' ? (isDarkMode ? '#fff' : '#007AFF') : '#888'} />
+            <Text style={{ fontSize: 12, color: currentTab === 'activity' ? (isDarkMode ? '#fff' : '#007AFF') : '#888' }}>
+              Açıkta
+            </Text>
+            {currentTab === 'activity' && (
               <View style={{
                 position: 'absolute',
                 bottom: 0,
@@ -150,12 +154,16 @@ export default function Index() {
                 width: 24,
                 backgroundColor: isDarkMode ? '#fff' : '#007AFF',
                 borderRadius: 1,
-              }}/>
+              }} />
             )}
-          </TabsTrigger>
+          </TouchableOpacity>
 
-          <TabsTrigger value="profile" style={{ alignItems: 'center', justifyContent: 'center' }}>
+          {/* Profile Tab Trigger */}
+          <TouchableOpacity onPress={() => setCurrentTab('profile')} style={{ alignItems: 'center', justifyContent: 'center' }}>
             <User size={24} color={currentTab === 'profile' ? (isDarkMode ? '#fff' : '#007AFF') : '#888'} />
+            <Text style={{ fontSize: 12, color: currentTab === 'profile' ? (isDarkMode ? '#fff' : '#007AFF') : '#888' }}>
+              Profile
+            </Text>
             {currentTab === 'profile' && (
               <View style={{
                 position: 'absolute',
@@ -164,12 +172,16 @@ export default function Index() {
                 width: 24,
                 backgroundColor: isDarkMode ? '#fff' : '#007AFF',
                 borderRadius: 1,
-              }}/>
+              }} />
             )}
-          </TabsTrigger>
+          </TouchableOpacity>
 
-          <TabsTrigger value="settings" style={{ alignItems: 'center', justifyContent: 'center' }}>
+          {/* Settings Tab Trigger */}
+          <TouchableOpacity onPress={() => setCurrentTab('settings')} style={{ alignItems: 'center', justifyContent: 'center' }}>
             <Settings size={24} color={currentTab === 'settings' ? (isDarkMode ? '#fff' : '#007AFF') : '#888'} />
+            <Text style={{ fontSize: 12, color: currentTab === 'settings' ? (isDarkMode ? '#fff' : '#007AFF') : '#888' }}>
+              Ayarlar
+            </Text>
             {currentTab === 'settings' && (
               <View style={{
                 position: 'absolute',
@@ -178,9 +190,9 @@ export default function Index() {
                 width: 24,
                 backgroundColor: isDarkMode ? '#fff' : '#007AFF',
                 borderRadius: 1,
-              }}/>
+              }} />
             )}
-          </TabsTrigger>
+          </TouchableOpacity>
         </TabsList>
       </Tabs>
     </View>
